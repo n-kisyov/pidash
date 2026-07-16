@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block title %}pidash - Dashboard{% endblock %}
+{% block head %}
+<meta id="instances-data" data-instances="{{ instances_json }}">
+{% endblock %}
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-uppercase small opacity-75">Total Queries</h6>
+                        <h2 class="mb-0" id="total-queries">--</h2>
+                    </div>
+                    <i class="bi bi-search display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-uppercase small opacity-75">Queries Blocked</h6>
+                        <h2 class="mb-0" id="blocked-queries">--</h2>
+                    </div>
+                    <i class="bi bi-shield-fill display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-uppercase small opacity-75">Blocked %</h6>
+                        <h2 class="mb-0" id="percent-blocked">--</h2>
+                    </div>
+                    <i class="bi bi-pie-chart-fill display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-uppercase small opacity-75">Active Clients</h6>
+                        <h2 class="mb-0" id="active-clients">--</h2>
+                    </div>
+                    <i class="bi bi-people-fill display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-uppercase small opacity-75">Blocklist</h6>
+                        <h2 class="mb-0" id="gravity-size">--</h2>
+                        <small class="opacity-75" id="gravity-updated"></small>
+                    </div>
+                    <i class="bi bi-journal-check display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <h5 class="mb-0">Blocking Status</h5>
+                    <select class="form-select form-select-sm" style="width: auto;" id="instance-filter" onchange="onInstanceFilterChange()">
+                        <option value="">All Instances</option>
+                    </select>
+                </div>
+                <div>
+                    <button class="btn btn-success btn-sm me-1" onclick="setBlockingAll(true)">Enable All</button>
+                    <button class="btn btn-danger btn-sm" onclick="setBlockingAll(false)">Disable All</button>
+                </div>
+            </div>
+            <div class="card-body" id="blocking-status">
+                <div class="text-muted">Loading...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Queries Over Time</h5>
+                <select class="form-select form-select-sm" style="width: auto;" id="time-range" onchange="onTimeRangeChange()">
+                    <option value="0">All</option>
+                    <option value="1">Last hour</option>
+                    <option value="6" selected>Last 6 hours</option>
+                    <option value="24">Last 24 hours</option>
+                    <option value="168">Last 7 days</option>
+                </select>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="queriesOverTimeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Query Types</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="queryTypesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Client Activity Over Time</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="clientsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Upstream Servers</h5></div>
+            <div class="card-body">
+                <canvas id="upstreamsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="topDomainsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#permitted-domains">
+                            Top Permitted
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#blocked-domains">
+                            Top Blocked
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="permitted-domains">
+                        <table class="table table-sm" id="top-permitted-domains-table">
+                            <thead><tr><th>Domain</th><th>Count</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="blocked-domains">
+                        <table class="table table-sm" id="top-blocked-domains-table">
+                            <thead><tr><th>Domain</th><th>Count</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="topClientsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#permitted-clients">
+                            Top Clients (All)
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#blocked-clients">
+                            Top Clients (Blocked)
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="permitted-clients">
+                        <table class="table table-sm" id="top-permitted-clients-table">
+                            <thead><tr><th>Client</th><th>Count</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="blocked-clients">
+                        <table class="table table-sm" id="top-blocked-clients-table">
+                            <thead><tr><th>Client</th><th>Count</th><th></th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

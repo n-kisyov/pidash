@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}pidash - Query Log{% endblock %}
+{% block content %}
+
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="bi bi-funnel"></i> Filters</h5></div>
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-3">
+                <label class="form-label">Domain</label>
+                <input type="text" class="form-control" id="filter-domain" placeholder="example.com">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Client IP</label>
+                <input type="text" class="form-control" id="filter-client" placeholder="192.168.1.100">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select class="form-select" id="filter-status">
+                    <option value="">All</option>
+                    <option value="blocked">Blocked</option>
+                    <option value="permitted">Permitted</option>
+                    <option value="cached">Cached</option>
+                    <option value="forwarded">Forwarded</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Type</label>
+                <select class="form-select" id="filter-type">
+                    <option value="">All</option>
+                    <option value="A">A</option>
+                    <option value="AAAA">AAAA</option>
+                    <option value="CNAME">CNAME</option>
+                    <option value="PTR">PTR</option>
+                    <option value="SRV">SRV</option>
+                    <option value="TXT">TXT</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100" onclick="loadQueries()">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-list-ul"></i> Query Log</h5>
+        <div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="loadQueries()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="queries-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Instance</th>
+                        <th>Type</th>
+                        <th>Domain</th>
+                        <th>Client</th>
+                        <th>Status</th>
+                        <th>Upstream</th>
+                    </tr>
+                </thead>
+                <tbody id="queries-tbody">
+                </tbody>
+            </table>
+        </div>
+        <div id="queries-loading" class="text-center py-4 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <button class="btn btn-sm btn-outline-primary" id="load-more-btn" onclick="loadMoreQueries()">
+            Load More
+        </button>
+        <small class="text-muted" id="queries-count">0 results</small>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/queries.js') }}"></script>
+{% endblock %}

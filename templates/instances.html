@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}pidash - Instances{% endblock %}
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-hdd-stack"></i> Pi-hole Instances</h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addInstanceModal">
+                    <i class="bi bi-plus-lg"></i> Add Instance
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Name</th>
+                            <th>URL</th>
+                            <th>API Key</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="instances-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addInstanceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Pi-hole Instance</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-instance-form">
+                    <div class="mb-3">
+                        <label class="form-label">ID</label>
+                        <input type="text" class="form-control" name="id" required
+                               placeholder="e.g. home-pi">
+                        <div class="form-text">Unique identifier (letters, numbers, hyphens, underscores)</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" required
+                               placeholder="Home Pi-hole">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">URL</label>
+                        <input type="url" class="form-control" name="url" required
+                               placeholder="http://192.168.1.10">
+                        <div class="form-text">Full URL to the Pi-hole admin interface. E.g. <code>http://192.168.1.10</code> or <code>https://pi.hole</code></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">API Key (optional)</label>
+                        <input type="text" class="form-control" name="api_key"
+                               placeholder="Leave empty if no auth required">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveInstance()">Add Instance</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editInstanceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Instance</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-instance-form">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">URL</label>
+                        <input type="url" class="form-control" name="url" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">API Key (optional)</label>
+                        <input type="text" class="form-control" name="api_key"
+                               placeholder="Leave empty if no auth required">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateInstance()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/instances.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}pidash - Domains{% endblock %}
+{% block content %}
+
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="bi bi-shield"></i> Domain Management</h5></div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Pi-hole Instance</label>
+                <select class="form-select" id="domain-instance-select">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-3" id="domainTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#allow-exact">
+                    Allowlist (Exact)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#allow-regex">
+                    Allowlist (Regex)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#deny-exact">
+                    Denylist (Exact)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#deny-regex">
+                    Denylist (Regex)
+                </button>
+            </li>
+        </ul>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="new-domain-input" placeholder="domain.com or regex pattern">
+                    <button class="btn btn-success" onclick="addDomain()">
+                        <i class="bi bi-plus-lg"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="allow-exact">
+                <table class="table table-sm">
+                    <thead><tr><th>Domain</th><th>Enabled</th><th>Comment</th><th>Groups</th><th></th></tr></thead>
+                    <tbody id="allow-exact-tbody"></tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="allow-regex">
+                <table class="table table-sm">
+                    <thead><tr><th>Regex</th><th>Enabled</th><th>Comment</th><th>Groups</th><th></th></tr></thead>
+                    <tbody id="allow-regex-tbody"></tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="deny-exact">
+                <table class="table table-sm">
+                    <thead><tr><th>Domain</th><th>Enabled</th><th>Comment</th><th>Groups</th><th></th></tr></thead>
+                    <tbody id="deny-exact-tbody"></tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="deny-regex">
+                <table class="table table-sm">
+                    <thead><tr><th>Regex</th><th>Enabled</th><th>Comment</th><th>Groups</th><th></th></tr></thead>
+                    <tbody id="deny-regex-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/domains.js') }}"></script>
+{% endblock %}

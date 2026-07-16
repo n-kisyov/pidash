@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}pidash - System{% endblock %}
+{% block content %}
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label class="form-label">Pi-hole Instance</label>
+        <select class="form-select" id="system-instance-select">
+            <option value="">Loading...</option>
+        </select>
+    </div>
+</div>
+
+<div id="system-content">
+    <div class="text-center py-5 text-muted">Select an instance to view system details.</div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/system.js') }}"></script>
+{% endblock %}

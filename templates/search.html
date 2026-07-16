@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}pidash - Search{% endblock %}
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="input-group input-group-lg">
+            <input type="text" class="form-control font-monospace" id="search-input"
+                   placeholder="Search for a domain across all instances..." onkeypress="if(event.key==='Enter') searchDomain()">
+            <button class="btn btn-primary" onclick="searchDomain()">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+        <div class="form-text mt-1">Search domain lists (exact & regex) and gravity adlists across all Pi-hole instances.</div>
+    </div>
+</div>
+
+<div id="search-results"></div>
+<div id="search-loading" class="text-center py-5 d-none">
+    <div class="spinner-border text-primary"></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}pidash - Adlists{% endblock %}
+{% block content %}
+
+<div class="row mb-3 align-items-end">
+    <div class="col-md-3">
+        <label class="form-label">Pi-hole Instance</label>
+        <select class="form-select" id="adlists-instance-select">
+            <option value="">Loading...</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAdlistModal">
+            <i class="bi bi-plus-lg"></i> Add Adlist
+        </button>
+    </div>
+    <div class="col-md-7">
+        <div id="adlists-status" class="text-muted small mt-2"></div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Address</th>
+                        <th>Comment</th>
+                        <th># Domains</th>
+                        <th>Groups</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adlists-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addAdlistModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Adlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-adlist-form">
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" name="type">
+                            <option value="block">Blocklist</option>
+                            <option value="allow">Allowlist</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">URL / File Path</label>
+                        <textarea class="form-control font-monospace" name="address" rows="3" required
+                            placeholder="https://example.com/blocklist.txt"></textarea>
+                        <div class="form-text">One URL per line to add multiple lists at once.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comment</label>
+                        <input type="text" class="form-control" name="comment" placeholder="My blocklist">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveAdlist()">Add Adlist</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editAdlistModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Adlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-adlist-form">
+                    <input type="hidden" name="address">
+                    <input type="hidden" name="type">
+                    <div class="mb-3">
+                        <label class="form-label">Enabled</label>
+                        <select class="form-select" name="enabled">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comment</label>
+                        <input type="text" class="form-control" name="comment">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateAdlist()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/adlists.js') }}"></script>
+{% endblock %}
