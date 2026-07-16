@@ -88,7 +88,11 @@ function loadMoreQueries() {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadQueries();
-    setInterval(() => loadQueries(), 30000);
+    setInterval(() => {
+        if (document.getElementById('live-toggle')?.checked) {
+            loadQueries();
+        }
+    }, 30000);
 
     document.getElementById('queries-tbody').addEventListener('click', (e) => {
         const link = e.target.closest('.query-filter-link');

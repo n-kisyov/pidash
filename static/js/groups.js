@@ -1,4 +1,5 @@
 let groupsInstanceId = '';
+let groupsData = {};
 
 async function loadGroupsInstances() {
     const data = await apiGet('/api/instances');
@@ -34,9 +35,12 @@ async function loadGroups() {
         const groups = data && data.groups ? data.groups : [];
         if (groups.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No groups configured.</td></tr>';
+            groupsData = {};
             return;
         }
+        const map = {};
         groups.forEach(g => {
+            map[g.name] = g;
             const enabledBadge = g.enabled
                 ? '<span class="badge bg-success">Yes</span>'
                 : '<span class="badge bg-secondary">No</span>';
@@ -57,6 +61,7 @@ async function loadGroups() {
                 </td>
             </tr>`;
         });
+        groupsData = map;
     } catch (err) {
         tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error loading data</td></tr>';
     }
@@ -89,11 +94,12 @@ async function saveGroup() {
 
 function editGroup(encodedName) {
     const name = decodeURIComponent(encodedName);
+    const groupData = groupsData[name] || {};
     const form = document.getElementById('edit-group-form');
     form.elements['name'].value = name;
     form.elements['new_name'].value = name;
-    form.elements['comment'].value = '';
-    form.elements['enabled'].checked = true;
+    form.elements['comment'].value = groupData.comment || '';
+    form.elements['enabled'].checked = groupData.enabled !== 0;
     new bootstrap.Modal(document.getElementById('editGroupModal')).show();
 }
 

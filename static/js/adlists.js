@@ -1,4 +1,5 @@
 let adlistsInstanceId = '';
+let adlistsData = {};
 
 async function loadAdlistsInstances() {
     const data = await apiGet('/api/instances');
@@ -34,9 +35,12 @@ async function loadAdlists() {
         const lists = data && data.lists ? data.lists : [];
         if (lists.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No adlists configured.</td></tr>';
+            adlistsData = {};
             return;
         }
+        const map = {};
         lists.forEach(l => {
+            map[l.address] = l;
             const statusIcon = l.status === 1 ? '<i class="bi bi-check-circle-fill text-success"></i>' :
                                l.status === 2 ? '<i class="bi bi-check-circle text-info"></i>' :
                                l.status === 3 ? '<i class="bi bi-exclamation-triangle-fill text-warning"></i>' :
@@ -68,6 +72,7 @@ async function loadAdlists() {
                 </td>
             </tr>`;
         });
+        adlistsData = map;
     } catch (err) {
         tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error loading data</td></tr>';
     }
@@ -99,11 +104,12 @@ async function saveAdlist() {
 
 function editAdlist(encodedAddress, type) {
     const address = decodeURIComponent(encodedAddress);
+    const listData = adlistsData[address] || {};
     const form = document.getElementById('edit-adlist-form');
     form.elements['address'].value = address;
     form.elements['type'].value = type;
-    form.elements['enabled'].value = 'true';
-    form.elements['comment'].value = '';
+    form.elements['enabled'].value = listData.enabled ? 'true' : 'false';
+    form.elements['comment'].value = listData.comment || '';
     new bootstrap.Modal(document.getElementById('editAdlistModal')).show();
 }
 

@@ -44,7 +44,7 @@ async function apiPost(path, data) {
     if (!resp.ok) {
         console.error('apiPost failed:', resp.status, path);
     }
-    return resp.json();
+    try { return await resp.json(); } catch { return { error: 'Invalid server response' }; }
 }
 
 async function apiDelete(path) {
@@ -52,7 +52,7 @@ async function apiDelete(path) {
     if (!resp.ok) {
         console.error('apiDelete failed:', resp.status, path);
     }
-    return resp.json();
+    try { return await resp.json(); } catch { return { error: 'Invalid server response' }; }
 }
 
 async function apiPut(path, data) {
@@ -64,7 +64,7 @@ async function apiPut(path, data) {
     if (!resp.ok) {
         console.error('apiPut failed:', resp.status, path);
     }
-    return resp.json();
+    try { return await resp.json(); } catch { return { error: 'Invalid server response' }; }
 }
 
 async function apiPatch(path, data) {
@@ -76,7 +76,7 @@ async function apiPatch(path, data) {
     if (!resp.ok) {
         console.error('apiPatch failed:', resp.status, path);
     }
-    return resp.json();
+    try { return await resp.json(); } catch { return { error: 'Invalid server response' }; }
 }
 
 (function initTheme() {

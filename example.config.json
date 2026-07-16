@@ -1,15 +1,15 @@
 {
   "instances": [
     {
-      "id": "fn1",
-      "name": "fn1",
-      "url": "http://192.168.0.1",
+      "id": "primary",
+      "name": "Primary Pi-hole",
+      "url": "http://192.168.0.2",
       "api_key": null
     },
     {
-      "id": "fn2",
-      "name": "fn2",
-      "url": "http://192.168.1.1",
+      "id": "secondary",
+      "name": "Secondary Pi-hole",
+      "url": "http://192.168.1.2",
       "api_key": null
     }
   ],
